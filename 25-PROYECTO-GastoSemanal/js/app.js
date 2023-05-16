@@ -1,6 +1,7 @@
 // Varibles
 const formulario = document.querySelector('#agregar-gasto');
 const ulGastos = document.querySelector('#gastos ul');
+const restante = document.querySelector('#restante');
 let arrayGastos = [];
 
 class Gastos {
@@ -88,8 +89,8 @@ class Interfaz {
 
     agregarGasto(objGasto) {
         arrayGastos = [...arrayGastos, objGasto];
-
         this.mostrarGastos();
+        restante.textContent = `${objGasto.calcularRestante()}`;
     }
 
     // eliminarGasto(id) {
@@ -104,8 +105,9 @@ class Interfaz {
             if (e.target.classList.contains('btn')) {
                 const resto = e.target.parentElement.children[0].textContent.substring(2).trim();
                 arrayGastos = arrayGastos.filter( gastos => gastos.id !== Number(e.target.id));
-                document.querySelector('#restante').textContent = `${objGasto.restanteActualizar(Number(resto))}`;
+                restante.textContent = `${objGasto.restanteActualizar(Number(resto))}`;
                 this.mostrarGastos();
+                this.actualizarRestante(objGasto);
             }
         }
     }
@@ -117,10 +119,10 @@ class Interfaz {
     }
 
     actualizarRestante(objGasto) {
-        document.querySelector('#restante').textContent = `${objGasto.calcularRestante()}`;
-        if (objGasto.presupuesto < 0) {
-            console.log('Presupuesto agostado');
+        if (objGasto.getPresupuesto() <= 0) {
             formulario.children[2].disabled = true;
+        } else {
+            formulario.children[2].disabled = false;
         }
     }
 }
@@ -159,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         interfaz.eliminarGasto(objGasto);
 
         interfaz.actualizarRestante(objGasto);
+        // interfaz.actualizarGasto();
     });
 });
 
